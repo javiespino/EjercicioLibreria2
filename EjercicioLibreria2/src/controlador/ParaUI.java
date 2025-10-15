@@ -192,26 +192,96 @@ public class ParaUI extends UI {
 			}
 		});
 
+		// ISBN
 		textISBN.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) {
-		        validarVisual();
-		    }
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) {
-		        validarVisual();
-		    }
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) {
-		        validarVisual();
-		    }
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
 
-		    private void validarVisual() {
-		        String isbn = textISBN.getText();
-		        if (Validaciones.validarISBN(isbn, libreria)) {
+		    private void validar() {
+		        if (Validaciones.validarISBN(textISBN.getText(), libreria)) {
 		            textISBN.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
 		        } else {
 		            textISBN.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
 		        }
 		    }
 		});
+
+		// Autor
+		textAutor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+
+		    private void validar() {
+		        if (Validaciones.validarLetras(textAutor.getText())) {
+		            textAutor.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+		        } else {
+		            textAutor.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+		        }
+		    }
+		});
+
+		// Título
+		textTitulo.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+
+		    private void validar() {
+		        if (textTitulo.getText() != null && !textTitulo.getText().isEmpty()) {
+		            textTitulo.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+		        } else {
+		            textTitulo.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+		        }
+		    }
+		});
+
+		// Editorial
+		textEditorial.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+
+		    private void validar() {
+		        if (textEditorial.getText() != null && !textEditorial.getText().isEmpty()) {
+		            textEditorial.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+		        } else {
+		            textEditorial.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+		        }
+		    }
+		});
+
+		// Precio
+		textPrecio.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+
+		    private void validar() {
+		        if (Validaciones.isNumberFloat(textPrecio.getText())) {
+		            textPrecio.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+		        } else {
+		            textPrecio.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+		        }
+		    }
+		});
+
+		// Cantidad
+		textCantidad.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+
+		    private void validar() {
+		        if (Validaciones.isNumber(textCantidad.getText())) {
+		            textCantidad.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+		        } else {
+		            textCantidad.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+		        }
+		    }
+		});
+
 		
 	}
 
