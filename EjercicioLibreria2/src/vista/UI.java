@@ -1,7 +1,6 @@
 package vista;
 
 import java.awt.BorderLayout;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -11,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -27,6 +27,8 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
+
+import utiles.Validaciones;
 
 public class UI extends JFrame {
 
@@ -141,7 +143,7 @@ public class UI extends JFrame {
 		textISBN = new JTextField();
 		textISBN.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		textISBN.setColumns(10);
-
+		
 		textEditorial = new JTextField();
 		textEditorial.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		textEditorial.setColumns(10);
@@ -157,9 +159,6 @@ public class UI extends JFrame {
 		textPrecio = new JTextField();
 		textPrecio.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		textPrecio.setColumns(10);
-
-//		lblNewLabel_2 = new JLabel("New label");
-//		lblNewLabel_2.setIcon(new ImageIcon("C:\\Users\\Usuario\\Downloads\\libros-removebg-preview.png"));
 
 		lblFoto = new JLabel("");
 		lblFoto.setIcon(new ImageIcon(UI.class.getResource("/img/libros-removebg-preview (1).png")));

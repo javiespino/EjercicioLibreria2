@@ -13,19 +13,19 @@ public class Validaciones {
 	}
 
 	public static boolean validarISBN(String isbn, Libreria libreria) {
-		if (isbn == null || isbn.isEmpty())
-			return false;
+	    if (isbn == null || isbn.isEmpty())
+	        return false;
 
-		if (!(isbn.length() == 13 && !isNumber(isbn)))
-			return false;
+	    if (!isbn.matches("\\d{13}"))
+	        return false;
 
-		for (Libro libro : libreria.getListaLibros()) {
-			if (libro.getISBN().equals(isbn)) {
-				return false;
-			}
-		}
+	    for (Libro libro : libreria.getListaLibros()) {
+	        if (libro.getISBN().equals(isbn)) {
+	            return false;
+	        }
+	    }
 
-		return true;
+	    return true;
 	}
 
 	public static boolean isNumber(String texto) {

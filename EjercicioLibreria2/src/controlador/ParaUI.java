@@ -1,10 +1,12 @@
 package controlador;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 
@@ -71,7 +73,6 @@ public class ParaUI extends UI {
 		        }
 		    }
 		});
-
 
 		btnBorrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -179,6 +180,27 @@ public class ParaUI extends UI {
 			}
 		});
 
+		textISBN.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+		        validarVisual();
+		    }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+		        validarVisual();
+		    }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+		        validarVisual();
+		    }
+
+		    private void validarVisual() {
+		        String isbn = textISBN.getText();
+		        if (Validaciones.validarISBN(isbn, libreria)) {
+		            textISBN.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+		        } else {
+		            textISBN.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+		        }
+		    }
+		});
+		
 	}
 
 	private void generarLibreria() {
