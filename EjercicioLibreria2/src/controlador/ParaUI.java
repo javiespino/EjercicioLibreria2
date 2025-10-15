@@ -145,9 +145,15 @@ public class ParaUI extends UI {
 				}
 
 				libro.setCantidad(libro.getCantidad() - ventas);
-				JOptionPane.showMessageDialog(null, "Venta realizada con éxito.\nSe vendieron " + ventas
-						+ " unidades.\nStock actual: " + libro.getCantidad());
+				double total = ventas * libro.getPrecio();
+				JOptionPane.showMessageDialog(null, 
+				    "Venta realizada con éxito.\n" +
+				    "Se vendieron " + ventas + " unidades.\n" +
+				    "Total de la venta: €" + total + "\n" +
+				    "Stock actual: " + libro.getCantidad()
+				);
 				libreria.rellenarTabla(tablaLibros);
+
 			}
 		});
 
