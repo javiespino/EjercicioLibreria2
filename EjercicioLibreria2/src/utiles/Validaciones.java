@@ -31,7 +31,7 @@ public class Validaciones {
 	public static boolean isNumber(String texto) {
 	    if (texto == null || texto.isEmpty())
 	        return false;
-	    
+
 	    if (!Pattern.matches("\\d+", texto))
 	        return false;
 
@@ -43,22 +43,27 @@ public class Validaciones {
 	    }
 	}
 
+
 	public static boolean isNumberFloat(String texto) {
 	    if (texto == null || texto.isEmpty())
 	        return false;
 
 	    try {
-	        Float.parseFloat(texto.trim());
+	        float valor = Float.parseFloat(texto.trim());
 	        char charAt = texto.charAt(texto.length() - 1);
 	        if (charAt == 'f' || charAt == 'd') {
-	        	return false;
+	            return false;
 	        }
+	        if (valor <= 0) {
+	            return false;
+	        }
+
 	    } catch (NumberFormatException e) {
 	        return false;
 	    }
+
 	    return true;
 	}
-
 
 	public static boolean validateFields(String isbn, String autor, String titulo, String editorial, String precio,
 			String formato, String estado, String cantidad, Libreria libreria) {
