@@ -34,7 +34,7 @@ public class UI extends JFrame {
 	protected JPanel contentPane, panel, formato, formato_1;
 	protected JLabel lblISBN, lblTitulo, lblAutor, lblFoto, lblCantidad, lblEstado, lblEditorial, lblPrecio, lblFormato,
 			lblPrincipal;
-	protected JButton btnGuardar, btnSalida, btnLimpiar, btnBorrar, btnConsultar, btnComprar, btnVender;
+	protected JButton btnGuardar, btnSalida, btnEditar, btnBorrar, btnConsultar, btnComprar, btnVender;
 	protected JTextField textISBN, textEditorial, textAutor, textTitulo, textPrecio, textCantidad;
 	protected JScrollPane scrollPane;
 	protected JTable tablaLibros;
@@ -73,10 +73,10 @@ public class UI extends JFrame {
 		btnGuardar.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		panelInferior.add(btnGuardar);
 
-		btnLimpiar = new JButton("LIMPIAR");
-		btnLimpiar.setIcon(new ImageIcon(UI.class.getResource("/img/limpiar.png")));
-		btnLimpiar.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		panelInferior.add(btnLimpiar);
+		btnEditar = new JButton("EDITAR");
+		btnEditar.setIcon(new ImageIcon(UI.class.getResource("/img/editar.png")));
+		btnEditar.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		panelInferior.add(btnEditar);
 
 		btnBorrar = new JButton("BORRAR");
 		btnBorrar.setIcon(new ImageIcon(UI.class.getResource("/img/basura.png")));

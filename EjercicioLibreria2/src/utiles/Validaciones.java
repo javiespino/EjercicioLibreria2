@@ -82,4 +82,37 @@ public class Validaciones {
 
 		return true;
 	}
+	
+	public static boolean validateFieldsEdit(String isbn, String autor, String titulo, String editorial, String precio,
+			String formato, String estado, String cantidad, Libreria libreria) {
+
+		if (!validarISBNEdit(isbn, libreria))
+			return false;
+		if (!validarLetras(autor))
+			return false;
+		if (titulo == null || titulo.isEmpty())
+			return false;
+		if (editorial == null || editorial.isEmpty())
+			return false;
+		if (!isNumberFloat(precio))
+			return false;
+		if (formato == null || formato.isEmpty())
+			return false;
+		if (estado == null || estado.isEmpty())
+			return false;
+		if (!isNumber(cantidad))
+			return false;
+
+		return true;
+	}
+	
+	public static boolean validarISBNEdit(String isbn, Libreria libreria) {
+		if (isbn == null || isbn.isEmpty())
+			return false;
+
+		if (!(isbn.length() == 13 && !isNumber(isbn)))
+			return false;
+
+		return true;
+	}
 }

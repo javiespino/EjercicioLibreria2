@@ -22,7 +22,7 @@ public class ParaUI extends UI {
 
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (Validaciones.validateFields(textISBN.getText(), textAutor.getText(), textTitulo.getText(),
+				if (Validaciones.validateFields(textISBN.getText(), textTitulo.getText(), textAutor.getText(),
 						textEditorial.getText(), textPrecio.getText(), getSelectedRadio(grupoFormato),
 						getSelectedRadio(grupoEstado), textCantidad.getText(), libreria)) {
 
@@ -31,7 +31,7 @@ public class ParaUI extends UI {
 							getSelectedRadio(grupoFormato), getSelectedRadio(grupoEstado),
 							Integer.parseInt(textCantidad.getText()));
 
-					libreria.agregarLibro(libro);
+					libreria.guardarLibro(libro);
 					libreria.mostrarLibros();
 					libreria.rellenarTabla(tablaLibros);
 					limpiar();
@@ -42,11 +42,36 @@ public class ParaUI extends UI {
 			}
 		});
 
-		btnLimpiar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				limpiar();
-			}
+		btnEditar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        if (Validaciones.validateFieldsEdit(textISBN.getText(), textTitulo.getText(), textAutor.getText(),
+		                textEditorial.getText(), textPrecio.getText(), getSelectedRadio(grupoFormato),
+		                getSelectedRadio(grupoEstado), textCantidad.getText(), libreria)) {
+
+		            Libro libroExistente = libreria.obtenerLibroDos(textISBN.getText());
+
+		            if (libroExistente != null) {
+		                libroExistente.setAutor(textAutor.getText());
+		                libroExistente.setTitulo(textTitulo.getText());
+		                libroExistente.setEditorial(textEditorial.getText());
+		                libroExistente.setPrecio(Float.parseFloat(textPrecio.getText()));
+		                libroExistente.setFormato(getSelectedRadio(grupoFormato));
+		                libroExistente.setEstado(getSelectedRadio(grupoEstado));
+		                libroExistente.setCantidad(Integer.parseInt(textCantidad.getText()));
+
+		                libreria.mostrarLibros();
+		                libreria.rellenarTabla(tablaLibros);
+		                limpiar();
+		                JOptionPane.showMessageDialog(null, "Libro editado con éxito");
+		            } else {
+		                JOptionPane.showMessageDialog(null, "No se encontró el libro con el ISBN ingresado");
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Campos erroneos");
+		        }
+		    }
 		});
+
 
 		btnBorrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -146,12 +171,9 @@ public class ParaUI extends UI {
 
 				libro.setCantidad(libro.getCantidad() - ventas);
 				double total = ventas * libro.getPrecio();
-				JOptionPane.showMessageDialog(null, 
-				    "Venta realizada con éxito.\n" +
-				    "Se vendieron " + ventas + " unidades.\n" +
-				    "Total de la venta: €" + total + "\n" +
-				    "Stock actual: " + libro.getCantidad()
-				);
+				JOptionPane.showMessageDialog(null,
+						"Venta realizada con éxito.\n" + "Se vendieron " + ventas + " unidades.\n"
+								+ "Total de la venta: €" + total + "\n" + "Stock actual: " + libro.getCantidad());
 				libreria.rellenarTabla(tablaLibros);
 
 			}
@@ -160,17 +182,26 @@ public class ParaUI extends UI {
 	}
 
 	private void generarLibreria() {
-		libreria.agregarLibro(new Libro("1111111111111", "Cien años de soledad", "Sudamericana",
-				"Gabriel García Márquez", 19.99, "Cartone", "Reedicion", 10));
-		libreria.agregarLibro(new Libro("2222222222222", "Don Quijote de la Mancha", "Espasa", "Miguel de Cervantes",
+		libreria.guardarLibro(new Libro("1111111111111", "Cien años de soledad", "Gabriel García Márquez",
+				"Sudamericana", 19.99, "Cartone", "Reedicion", 10));
+		libreria.guardarLibro(new Libro("2222222222222", "Don Quijote de la Mancha", "Miguel de Cervantes", "Espasa",
 				24.50, "Grapada", "Novedad", 5));
-		libreria.agregarLibro(new Libro("3333333333333", "La sombra del viento", "Planeta", "Carlos Ruiz Zafón", 17.95,
+		libreria.guardarLibro(new Libro("3333333333333", "La sombra del viento", "Carlos Ruiz Zafón", "Planeta", 17.95,
 				"Rustica", "Reedicion", 8));
-		libreria.agregarLibro(
-				new Libro("4444444444444", "1984", "Debolsillo", "George Orwell", 12.99, "Espiral", "Novedad", 12));
-		libreria.agregarLibro(new Libro("5555555555555", "El Principito", "Salamandra", "Antoine de Saint-Exupéry",
+		libreria.guardarLibro(
+				new Libro("4444444444444", "1984", "George Orwell", "Debolsillo", 12.99, "Espiral", "Novedad", 12));
+		libreria.guardarLibro(new Libro("5555555555555", "El Principito", "Antoine de Saint-Exupéry", "Salamandra",
 				9.50, "Cartone", "Reedicion", 20));
-
+		libreria.guardarLibro(new Libro("6666666666666", "El Hobbit", "J.R.R. Tolkien", "Minotauro", 15.99, "Rustica",
+				"Reedicion", 7));
+		libreria.guardarLibro(new Libro("7777777777777", "Harry Potter y la piedra filosofal", "J.K. Rowling",
+				"Salamandra", 18.50, "Cartone", "Novedad", 12));
+		libreria.guardarLibro(new Libro("8888888888888", "Crimen y castigo", "Fiódor Dostoievski", "Alianza", 14.25,
+				"Espiral", "Reedicion", 9));
+		libreria.guardarLibro(new Libro("9999999999999", "El nombre del viento", "Patrick Rothfuss", "Plaza & Janés",
+				20.00, "Cartone", "Novedad", 6));
+		libreria.guardarLibro(new Libro("1010101010101", "Los pilares de la Tierra", "Ken Follett", "DeBolsillo", 22.75,
+				"Rustica", "Reedicion", 8));
 		libreria.rellenarTabla(tablaLibros);
 	}
 
