@@ -131,9 +131,15 @@ public class ParaUI extends UI {
 				}
 
 				libro.setCantidad(libro.getCantidad() + compras);
-				JOptionPane.showMessageDialog(null, "Compra realizada con éxito.\nSe añadieron " + compras
-						+ " unidades.\nStock actual: " + libro.getCantidad());
-				libreria.rellenarTabla(tablaLibros);
+				double total = compras * libro.getPrecio();
+				
+		        JOptionPane.showMessageDialog(null,
+		                "Compra realizada con éxito.\n" +
+		                        "Se añadieron " + compras + " unidades.\n" +
+		                        "Total: €" + String.format("%.2f", total) + "\n" +
+		                        "Stock actual: " + libro.getCantidad());
+
+		        libreria.rellenarTabla(tablaLibros);
 			}
 		});
 
@@ -171,11 +177,17 @@ public class ParaUI extends UI {
 				}
 
 				libro.setCantidad(libro.getCantidad() - ventas);
-				double total = ventas * libro.getPrecio();
-				JOptionPane.showMessageDialog(null,
-						"Venta realizada con éxito.\n" + "Se vendieron " + ventas + " unidades.\n"
-								+ "Total de la venta: €" + total + "\n" + "Stock actual: " + libro.getCantidad());
-				libreria.rellenarTabla(tablaLibros);
+				double totalSinIVA = ventas * libro.getPrecio();
+		        double totalConIVA = totalSinIVA * 1.21;
+
+		        JOptionPane.showMessageDialog(null,
+		                "Venta realizada con éxito.\n" +
+		                        "Se vendieron " + ventas + " unidades.\n" +
+		                        "Total sin IVA: €" + String.format("%.2f", totalSinIVA) + "\n" +
+		                        "Total con IVA (21%): €" + String.format("%.2f", totalConIVA) + "\n" +
+		                        "Stock actual: " + libro.getCantidad());
+
+		        libreria.rellenarTabla(tablaLibros);
 
 			}
 		});
