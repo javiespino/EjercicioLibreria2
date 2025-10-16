@@ -121,9 +121,11 @@ public class UI extends JFrame {
 		grupoFormato = new ButtonGroup();
 		grupoEstado = new ButtonGroup();
 
-		panel = new JPanel();
+		JPanel panel = new JPanel();
 		panel.setBackground(new Color(204, 204, 153));
-		tabbedPane.addTab("LIBRO", null, panel, null);
+		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		ImageIcon iconoLibro = new ImageIcon(getClass().getResource("/img/libro.png"));
+		tabbedPane.addTab("LIBRO", iconoLibro, panel, "Sección de libros");
 
 		lblTitulo = new JLabel("Titulo:");
 		lblTitulo.setFont(new Font("Tahoma", Font.PLAIN, 24));
@@ -334,8 +336,10 @@ public class UI extends JFrame {
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(204, 204, 153));
-		tabbedPane.addTab("BIBLIOTECA\r\n", null, panel_1, null);
 		panel_1.setLayout(new GridLayout(0, 1, 0, 0));
+		ImageIcon iconoBiblioteca = new ImageIcon(getClass().getResource("/img/libros.png"));
+		tabbedPane.addTab("BIBLIOTECA", iconoBiblioteca, panel_1, "Sección de biblioteca");
+
 
 		scrollPane = new JScrollPane();
 		panel_1.add(scrollPane);
