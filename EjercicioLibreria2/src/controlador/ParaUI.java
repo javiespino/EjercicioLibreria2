@@ -27,8 +27,10 @@ public class ParaUI extends UI {
 	private int indiceLibroEditando = -1;
 
 	public ParaUI() {
+		// Llamada a la función para generar librerias automaticamente
 		generarLibreria();
 
+		// BOTONES
 		btnGuardar.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        String autor = textAutor.getText().trim();
@@ -97,12 +99,10 @@ public class ParaUI extends UI {
 
 		        libreria.mostrarLibros();
 		        libreria.rellenarTabla(tablaLibros);
-		        limpiar();
+		        limpiarCampos(textISBN, textAutor, textTitulo, textEditorial, textPrecio, textCantidad);
 
 		        textISBN.setEditable(true);
 		        textISBN.setBackground(Color.WHITE);
-
-		        quitarBorde(textISBN, textAutor, textTitulo, textEditorial, textPrecio, textCantidad);
 		        
 		        panel.setVisible(false);
 		        panel_1.setVisible(true);
@@ -188,7 +188,7 @@ public class ParaUI extends UI {
 					return;
 				}
 
-				mostrarCampos(libreria.obtenerLibroDos(ISBNsel));
+				mostrarLibro(libreria.obtenerLibroDos(ISBNsel));
 			}
 		});
 
@@ -277,6 +277,23 @@ public class ParaUI extends UI {
 			}
 		});
 
+		btnSalida.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        int respuesta = JOptionPane.showConfirmDialog(
+		                null,
+		                "¿Estás seguro de que deseas salir?",
+		                "Confirmar salida",
+		                JOptionPane.YES_NO_OPTION,
+		                JOptionPane.WARNING_MESSAGE
+		        );
+
+		        if (respuesta == JOptionPane.YES_OPTION) {
+		            System.exit(0);
+		        }
+		    }
+		});
+
+		// Funciones para poder editar los cuadros de texto
 		((AbstractDocument) textISBN.getDocument()).setDocumentFilter(new javax.swing.text.DocumentFilter() {
 			@Override
 			public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
@@ -435,6 +452,8 @@ public class ParaUI extends UI {
 
 	}
 
+	// FUNCIONES AUXILIARES
+	// Genera una libreria con 10 libros para probar
 	private void generarLibreria() {
 		libreria.guardarLibro(new Libro("1111111111111", "Cien años de soledad", "Gabriel García Márquez",
 				"Sudamericana", 19.99, "Cartone", "Reedicion", 10));
@@ -459,7 +478,8 @@ public class ParaUI extends UI {
 		libreria.rellenarTabla(tablaLibros);
 	}
 
-	private void mostrarCampos(Libro libro) {
+	// Muestra el libro en un cuadro de dialogo
+	private void mostrarLibro(Libro libro) {
 		String mensaje = String.format(
 				"Información del libro:\n\n" + "ISBN: %s\n" + "Título: %s\n" + "Editorial: %s\n" + "Autor: %s\n"
 						+ "Precio: %.2f €\n" + "Formato: %s\n" + "Estado: %s\n" + "Cantidad: %d",
@@ -469,6 +489,7 @@ public class ParaUI extends UI {
 		JOptionPane.showMessageDialog(null, mensaje, "Detalles del Libro", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	// Devuelve el boton seleccionado
 	private String getSelectedRadio(ButtonGroup group) {
 		Enumeration<AbstractButton> elements = group.getElements();
 		for (int i = 0; i < group.getButtonCount(); i++) {
@@ -480,7 +501,8 @@ public class ParaUI extends UI {
 		return "";
 	}
 
-	private void limpiar() {
+	// Limpia los cuadros de texto y sus bordes
+	private void limpiarCampos(JTextField... campos) {
 		textISBN.setText("");
 		textAutor.setText("");
 		textTitulo.setText("");
@@ -489,14 +511,11 @@ public class ParaUI extends UI {
 		textCantidad.setText("");
 		grupoFormato.clearSelection();
 		grupoEstado.clearSelection();
-	}
-
-	public void quitarBorde(JTextField... campos) {
-	    Border bordeOriginal = UIManager.getBorder("TextField.border");
+		
+		Border bordeOriginal = UIManager.getBorder("TextField.border");
 
 	    for (JTextField campo : campos) {
 	        campo.setBorder(bordeOriginal);
 	    }
 	}
-
 }
