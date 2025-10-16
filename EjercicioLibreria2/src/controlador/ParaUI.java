@@ -9,6 +9,9 @@ import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 
 import modelo.Libreria;
 import modelo.Libro;
@@ -192,6 +195,25 @@ public class ParaUI extends UI {
 			}
 		});
 
+		// Limitar que no se puedan poner mas de 13 caracteres
+		((AbstractDocument) textISBN.getDocument()).setDocumentFilter(new javax.swing.text.DocumentFilter() {
+		    @Override
+		    public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+		            throws BadLocationException {
+		        if ((fb.getDocument().getLength() + string.length()) <= 13) {
+		            super.insertString(fb, offset, string, attr);
+		        }
+		    }
+
+		    @Override
+		    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+		            throws BadLocationException {
+		        if ((fb.getDocument().getLength() - length + (text == null ? 0 : text.length())) <= 13) {
+		            super.replace(fb, offset, length, text, attrs);
+		        }
+		    }
+		});
+		
 		// ISBN
 		textISBN.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
