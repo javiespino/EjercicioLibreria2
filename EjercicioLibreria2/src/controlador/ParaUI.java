@@ -9,6 +9,9 @@ import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -21,59 +24,130 @@ import vista.UI;
 public class ParaUI extends UI {
 	Libreria libreria = new Libreria();
 	Libro libro;
+	private int indiceLibroEditando = -1;
 
 	public ParaUI() {
 		generarLibreria();
 
 		btnGuardar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (Validaciones.validateFields(textISBN.getText(), textAutor.getText(), textTitulo.getText(),
-						textEditorial.getText(), textPrecio.getText(), getSelectedRadio(grupoFormato),
-						getSelectedRadio(grupoEstado), textCantidad.getText(), libreria)) {
+		    public void actionPerformed(ActionEvent e) {
+		        String autor = textAutor.getText().trim();
+		        String titulo = textTitulo.getText().trim();
+		        String editorial = textEditorial.getText().trim();
+		        String precioStr = textPrecio.getText().trim();
+		        String cantidadStr = textCantidad.getText().trim();
+		        String formato = getSelectedRadio(grupoFormato);
+		        String estado = getSelectedRadio(grupoEstado);
 
-					libro = new Libro(textISBN.getText(), textAutor.getText(), textTitulo.getText(),
-							textEditorial.getText(), Float.parseFloat(textPrecio.getText()),
-							getSelectedRadio(grupoFormato), getSelectedRadio(grupoEstado),
-							Integer.parseInt(textCantidad.getText()));
+		        if (!Validaciones.validarLetras(autor)) {
+		            JOptionPane.showMessageDialog(null, "El campo Autor solo puede contener letras y signos, sin números.");
+		            return;
+		        }
+		        if (titulo.isEmpty()) {
+		            JOptionPane.showMessageDialog(null, "El campo Título no puede estar vacío.");
+		            return;
+		        }
+		        if (editorial.isEmpty()) {
+		            JOptionPane.showMessageDialog(null, "El campo Editorial no puede estar vacío.");
+		            return;
+		        }
+		        if (!precioStr.matches("^\\d+(\\.\\d{1,2})?$")) {
+		            JOptionPane.showMessageDialog(null, "El precio debe ser un número válido con máximo dos decimales. Ejemplo: 12.50");
+		            return;
+		        }
+		        if (!cantidadStr.matches("\\d+")) {
+		            JOptionPane.showMessageDialog(null, "La cantidad debe ser un número entero válido.");
+		            return;
+		        }
+		        if (formato == null || formato.isEmpty()) {
+		            JOptionPane.showMessageDialog(null, "Debe seleccionar un formato (Cartone, Rustica, Grapada, Espiral).");
+		            return;
+		        }
+		        if (estado == null || estado.isEmpty()) {
+		            JOptionPane.showMessageDialog(null, "Debe seleccionar un estado (Reedicion o Novedad).");
+		            return;
+		        }
 
-					libreria.guardarLibro(libro);
-					libreria.mostrarLibros();
-					libreria.rellenarTabla(tablaLibros);
-					limpiar();
-					JOptionPane.showMessageDialog(null, "Libro guardado con éxito");
-				} else {
-					JOptionPane.showMessageDialog(null, "Campos erroneos");
-				}
-			}
+		        float precio = Float.parseFloat(precioStr);
+		        int cantidad = Integer.parseInt(cantidadStr);
+
+		        if (indiceLibroEditando == -1) {
+		            String isbn = textISBN.getText().trim();
+		            if (!Validaciones.validarISBN(isbn, libreria, -1)) {
+		                JOptionPane.showMessageDialog(null, "El ISBN no es válido o ya existe.");
+		                return;
+		            }
+		            Libro libro = new Libro(isbn, autor, titulo, editorial, precio, formato, estado, cantidad);
+		            JOptionPane.showMessageDialog(null, "Libro guardado con éxito");
+		            libreria.guardarLibro(libro);
+		        } else {
+		            Libro libroExistente = libreria.getListaLibros().get(indiceLibroEditando);
+		            libroExistente.setAutor(autor);
+		            libroExistente.setTitulo(titulo);
+		            libroExistente.setEditorial(editorial);
+		            libroExistente.setPrecio(precio);
+		            libroExistente.setFormato(formato);
+		            libroExistente.setEstado(estado);
+		            libroExistente.setCantidad(cantidad);
+		            
+		            JOptionPane.showMessageDialog(null, "Libro editado con éxito");
+
+		            indiceLibroEditando = -1;
+		        }
+
+		        libreria.mostrarLibros();
+		        libreria.rellenarTabla(tablaLibros);
+		        limpiar();
+
+		        textISBN.setEditable(true);
+		        textISBN.setBackground(Color.WHITE);
+
+		        quitarBorde(textISBN, textAutor, textTitulo, textEditorial, textPrecio, textCantidad);
+		        
+		        panel.setVisible(false);
+		        panel_1.setVisible(true);
+		    }
 		});
 
 		btnEditar.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        if (Validaciones.validateFieldsEdit(textISBN.getText(), textTitulo.getText(), textAutor.getText(),
-		                textEditorial.getText(), textPrecio.getText(), getSelectedRadio(grupoFormato),
-		                getSelectedRadio(grupoEstado), textCantidad.getText(), libreria)) {
-
-		            Libro libroExistente = libreria.obtenerLibroDos(textISBN.getText());
-
-		            if (libroExistente != null) {
-		                libroExistente.setAutor(textAutor.getText());
-		                libroExistente.setTitulo(textTitulo.getText());
-		                libroExistente.setEditorial(textEditorial.getText());
-		                libroExistente.setPrecio(Float.parseFloat(textPrecio.getText()));
-		                libroExistente.setFormato(getSelectedRadio(grupoFormato));
-		                libroExistente.setEstado(getSelectedRadio(grupoEstado));
-		                libroExistente.setCantidad(Integer.parseInt(textCantidad.getText()));
-
-		                libreria.mostrarLibros();
-		                libreria.rellenarTabla(tablaLibros);
-		                limpiar();
-		                JOptionPane.showMessageDialog(null, "Libro editado con éxito");
-		            } else {
-		                JOptionPane.showMessageDialog(null, "No se encontró el libro con el ISBN ingresado");
-		            }
-		        } else {
-		            JOptionPane.showMessageDialog(null, "Campos erroneos");
+		        int indice = libreria.obtenerId(tablaLibros);
+		        if (indice == -1) {
+		            JOptionPane.showMessageDialog(null, "No has seleccionado ningún libro");
+		            return;
 		        }
+
+		        Libro libroSeleccionado = libreria.getListaLibros().get(indice);
+
+		        panel_1.setVisible(false);
+		        panel.setVisible(true);
+
+		        textISBN.setText(libroSeleccionado.getISBN());
+		        textISBN.setEditable(false);
+		        textISBN.setBackground(Color.LIGHT_GRAY);
+		        textISBN.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 2));
+
+		        textAutor.setText(libroSeleccionado.getAutor());
+		        textTitulo.setText(libroSeleccionado.getTitulo());
+		        textEditorial.setText(libroSeleccionado.getEditorial());
+		        textPrecio.setText(String.valueOf(libroSeleccionado.getPrecio()));
+		        textCantidad.setText(String.valueOf(libroSeleccionado.getCantidad()));
+
+		        grupoFormato.clearSelection();
+		        switch (libroSeleccionado.getFormato()) {
+		            case "Cartone": rdbtnCartone.setSelected(true); break;
+		            case "Rustica": rdbtnRustica.setSelected(true); break;
+		            case "Grapada": rdbtnGrapada.setSelected(true); break;
+		            case "Espiral": rdbtnEspiral.setSelected(true); break;
+		        }
+
+		        grupoEstado.clearSelection();
+		        switch (libroSeleccionado.getEstado()) {
+		            case "Reedicion": rdbtnReedicion.setSelected(true); break;
+		            case "Novedad": rdbtnNovedad.setSelected(true); break;
+		        }
+
+		        indiceLibroEditando = indice;
 		    }
 		});
 
@@ -101,7 +175,19 @@ public class ParaUI extends UI {
 
 		btnConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String ISBNsel = JOptionPane.showInputDialog("Introduce ISBN");
+
+				String ISBNsel = JOptionPane.showInputDialog("Introduce el ISBN del libro a comprar:");
+				if (ISBNsel == null || ISBNsel.trim().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Debes introducir un ISBN válido.");
+					return;
+				}
+
+				Libro libro = libreria.obtenerLibroDos(ISBNsel.trim());
+				if (libro == null) {
+					JOptionPane.showMessageDialog(null, "No se encontró ningún libro con ese ISBN.");
+					return;
+				}
+
 				mostrarCampos(libreria.obtenerLibroDos(ISBNsel));
 			}
 		});
@@ -135,14 +221,12 @@ public class ParaUI extends UI {
 
 				libro.setCantidad(libro.getCantidad() + compras);
 				double total = compras * libro.getPrecio();
-				
-		        JOptionPane.showMessageDialog(null,
-		                "Compra realizada con éxito.\n" +
-		                        "Se añadieron " + compras + " unidades.\n" +
-		                        "Total: €" + String.format("%.2f", total) + "\n" +
-		                        "Stock actual: " + libro.getCantidad());
 
-		        libreria.rellenarTabla(tablaLibros);
+				JOptionPane.showMessageDialog(null,
+						"Compra realizada con éxito.\n" + "Se añadieron " + compras + " unidades.\n" + "Total: €"
+								+ String.format("%.2f", total) + "\n" + "Stock actual: " + libro.getCantidad());
+
+				libreria.rellenarTabla(tablaLibros);
 			}
 		});
 
@@ -181,47 +265,57 @@ public class ParaUI extends UI {
 
 				libro.setCantidad(libro.getCantidad() - ventas);
 				double totalSinIVA = ventas * libro.getPrecio();
-		        double totalConIVA = totalSinIVA * 1.21;
+				double totalConIVA = totalSinIVA * 1.21;
 
-		        JOptionPane.showMessageDialog(null,
-		                "Venta realizada con éxito.\n" +
-		                        "Se vendieron " + ventas + " unidades.\n" +
-		                        "Total sin IVA: €" + String.format("%.2f", totalSinIVA) + "\n" +
-		                        "Total con IVA (21%): €" + String.format("%.2f", totalConIVA) + "\n" +
-		                        "Stock actual: " + libro.getCantidad());
+				JOptionPane.showMessageDialog(null,
+						"Venta realizada con éxito.\n" + "Se vendieron " + ventas + " unidades.\n" + "Total sin IVA: €"
+								+ String.format("%.2f", totalSinIVA) + "\n" + "Total con IVA (21%): €"
+								+ String.format("%.2f", totalConIVA) + "\n" + "Stock actual: " + libro.getCantidad());
 
-		        libreria.rellenarTabla(tablaLibros);
+				libreria.rellenarTabla(tablaLibros);
 
 			}
 		});
 
-		// Limitar que no se puedan poner mas de 13 caracteres
 		((AbstractDocument) textISBN.getDocument()).setDocumentFilter(new javax.swing.text.DocumentFilter() {
-		    @Override
-		    public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
-		            throws BadLocationException {
-		        if ((fb.getDocument().getLength() + string.length()) <= 13) {
-		            super.insertString(fb, offset, string, attr);
-		        }
+			@Override
+			public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+					throws BadLocationException {
+				if ((fb.getDocument().getLength() + string.length()) <= 13) {
+					super.insertString(fb, offset, string, attr);
+				}
+			}
+
+			@Override
+			public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+					throws BadLocationException {
+				if ((fb.getDocument().getLength() - length + (text == null ? 0 : text.length())) <= 13) {
+					super.replace(fb, offset, length, text, attrs);
+				}
+			}
+		});
+
+		textISBN.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+		        validar();
 		    }
 
-		    @Override
-		    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-		            throws BadLocationException {
-		        if ((fb.getDocument().getLength() - length + (text == null ? 0 : text.length())) <= 13) {
-		            super.replace(fb, offset, length, text, attrs);
-		        }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+		        validar();
 		    }
-		});
-		
-		// ISBN
-		textISBN.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+		        validar();
+		    }
 
 		    private void validar() {
-		        if (Validaciones.validarISBN(textISBN.getText(), libreria)) {
+		        if (indiceLibroEditando != -1) {
+		            return;
+		        }
+
+		        String isbnActual = textISBN.getText().trim();
+
+		        if (Validaciones.validarISBN(isbnActual, libreria, indiceLibroEditando)) {
 		            textISBN.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
 		        } else {
 		            textISBN.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
@@ -229,82 +323,116 @@ public class ParaUI extends UI {
 		    }
 		});
 
-		// Autor
 		textAutor.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+			public void insertUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
 
-		    private void validar() {
-		        if (Validaciones.validarLetras(textAutor.getText())) {
-		            textAutor.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
-		        } else {
-		            textAutor.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-		        }
-		    }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			public void changedUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			private void validar() {
+				if (Validaciones.validarLetras(textAutor.getText())) {
+					textAutor.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+				} else {
+					textAutor.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+				}
+			}
 		});
 
-		// Título
 		textTitulo.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+			public void insertUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
 
-		    private void validar() {
-		        if (textTitulo.getText() != null && !textTitulo.getText().isEmpty()) {
-		            textTitulo.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
-		        } else {
-		            textTitulo.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-		        }
-		    }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			public void changedUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			private void validar() {
+				if (textTitulo.getText() != null && !textTitulo.getText().isEmpty()) {
+					textTitulo.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+				} else {
+					textTitulo.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+				}
+			}
 		});
 
-		// Editorial
 		textEditorial.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+			public void insertUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
 
-		    private void validar() {
-		        if (textEditorial.getText() != null && !textEditorial.getText().isEmpty()) {
-		            textEditorial.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
-		        } else {
-		            textEditorial.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-		        }
-		    }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			public void changedUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			private void validar() {
+				if (textEditorial.getText() != null && !textEditorial.getText().isEmpty()) {
+					textEditorial.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+				} else {
+					textEditorial.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+				}
+			}
 		});
 
-		// Precio
 		textPrecio.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+			public void insertUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
 
-		    private void validar() {
-		        if (Validaciones.isNumberFloat(textPrecio.getText())) {
-		            textPrecio.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
-		        } else {
-		            textPrecio.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-		        }
-		    }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			public void changedUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			private void validar() {
+				if (Validaciones.isNumberFloat(textPrecio.getText())) {
+					textPrecio.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+				} else {
+					textPrecio.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+				}
+			}
 		});
 
-		// Cantidad
 		textCantidad.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { validar(); }
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { validar(); }
+			public void insertUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
 
-		    private void validar() {
-		        if (Validaciones.isNumber(textCantidad.getText())) {
-		            textCantidad.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
-		        } else {
-		            textCantidad.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-		        }
-		    }
+			public void removeUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			public void changedUpdate(javax.swing.event.DocumentEvent e) {
+				validar();
+			}
+
+			private void validar() {
+				if (Validaciones.isNumber(textCantidad.getText())) {
+					textCantidad.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+				} else {
+					textCantidad.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+				}
+			}
 		});
 
-		
 	}
 
 	private void generarLibreria() {
@@ -316,7 +444,7 @@ public class ParaUI extends UI {
 				"Rustica", "Reedicion", 8));
 		libreria.guardarLibro(
 				new Libro("4444444444444", "1984", "George Orwell", "Debolsillo", 12.99, "Espiral", "Novedad", 12));
-		libreria.guardarLibro(new Libro("5555555555555", "El Principito", "Antoine de Saint-Exupéry", "Salamandra",
+		libreria.guardarLibro(new Libro("5555555555555", "El Principito", "Antoine de Saint Exupéry", "Salamandra",
 				9.50, "Cartone", "Reedicion", 20));
 		libreria.guardarLibro(new Libro("6666666666666", "El Hobbit", "J.R.R. Tolkien", "Minotauro", 15.99, "Rustica",
 				"Reedicion", 7));
@@ -324,7 +452,7 @@ public class ParaUI extends UI {
 				"Salamandra", 18.50, "Cartone", "Novedad", 12));
 		libreria.guardarLibro(new Libro("8888888888888", "Crimen y castigo", "Fiódor Dostoievski", "Alianza", 14.25,
 				"Espiral", "Reedicion", 9));
-		libreria.guardarLibro(new Libro("9999999999999", "El nombre del viento", "Patrick Rothfuss", "Plaza & Janés",
+		libreria.guardarLibro(new Libro("9999999999999", "El nombre del viento", "Patrick Rothfuss", "Plaza and Janés",
 				20.00, "Cartone", "Novedad", 6));
 		libreria.guardarLibro(new Libro("1010101010101", "Los pilares de la Tierra", "Ken Follett", "DeBolsillo", 22.75,
 				"Rustica", "Reedicion", 8));
@@ -332,37 +460,13 @@ public class ParaUI extends UI {
 	}
 
 	private void mostrarCampos(Libro libro) {
-		textISBN.setText(libro.getISBN());
-		textTitulo.setText(libro.getTitulo());
-		textEditorial.setText(libro.getEditorial());
-		textAutor.setText(libro.getAutor());
-		textPrecio.setText(String.valueOf(libro.getPrecio()));
+		String mensaje = String.format(
+				"Información del libro:\n\n" + "ISBN: %s\n" + "Título: %s\n" + "Editorial: %s\n" + "Autor: %s\n"
+						+ "Precio: %.2f €\n" + "Formato: %s\n" + "Estado: %s\n" + "Cantidad: %d",
+				libro.getISBN(), libro.getTitulo(), libro.getEditorial(), libro.getAutor(), libro.getPrecio(),
+				libro.getFormato(), libro.getEstado(), libro.getCantidad());
 
-		switch (libro.getFormato()) {
-		case "Cartone":
-			rdbtnCartone.setSelected(true);
-			break;
-		case "Espiral":
-			rdbtnEspiral.setSelected(true);
-			break;
-		case "Grapada":
-			rdbtnGrapada.setSelected(true);
-			break;
-		case "Rustica":
-			rdbtnRustica.setSelected(true);
-			break;
-		}
-
-		switch (libro.getEstado()) {
-		case "Novedad":
-			rdbtnNovedad.setSelected(true);
-			break;
-		case "Reedicion":
-			rdbtnReedicion.setSelected(true);
-			break;
-		}
-
-		textCantidad.setText(String.valueOf(libro.getCantidad()));
+		JOptionPane.showMessageDialog(null, mensaje, "Detalles del Libro", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private String getSelectedRadio(ButtonGroup group) {
@@ -386,4 +490,13 @@ public class ParaUI extends UI {
 		grupoFormato.clearSelection();
 		grupoEstado.clearSelection();
 	}
+
+	public void quitarBorde(JTextField... campos) {
+	    Border bordeOriginal = UIManager.getBorder("TextField.border");
+
+	    for (JTextField campo : campos) {
+	        campo.setBorder(bordeOriginal);
+	    }
+	}
+
 }

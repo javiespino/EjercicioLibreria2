@@ -33,7 +33,7 @@ import utiles.Validaciones;
 public class UI extends JFrame {
 
 	protected static final long serialVersionUID = 1L;
-	protected JPanel contentPane, panel, formato, formato_1;
+	protected JPanel contentPane, panel, formato, formato_1, panel_1;
 	protected JLabel lblISBN, lblTitulo, lblAutor, lblFoto, lblCantidad, lblEstado, lblEditorial, lblPrecio, lblFormato,
 			lblPrincipal;
 	protected JButton btnGuardar, btnSalida, btnEditar, btnBorrar, btnConsultar, btnComprar, btnVender;
@@ -121,7 +121,7 @@ public class UI extends JFrame {
 		grupoFormato = new ButtonGroup();
 		grupoEstado = new ButtonGroup();
 
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setBackground(new Color(204, 204, 153));
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
 		ImageIcon iconoLibro = new ImageIcon(getClass().getResource("/img/libro.png"));
@@ -334,7 +334,7 @@ public class UI extends JFrame {
 
 		panel.setLayout(gl_panel);
 
-		JPanel panel_1 = new JPanel();
+		panel_1 = new JPanel();
 		panel_1.setBackground(new Color(204, 204, 153));
 		panel_1.setLayout(new GridLayout(0, 1, 0, 0));
 		ImageIcon iconoBiblioteca = new ImageIcon(getClass().getResource("/img/libros.png"));
