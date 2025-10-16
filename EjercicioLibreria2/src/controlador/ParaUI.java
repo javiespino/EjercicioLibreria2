@@ -24,7 +24,7 @@ public class ParaUI extends UI {
 
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (Validaciones.validateFields(textISBN.getText(), textTitulo.getText(), textAutor.getText(),
+				if (Validaciones.validateFields(textISBN.getText(), textAutor.getText(), textTitulo.getText(),
 						textEditorial.getText(), textPrecio.getText(), getSelectedRadio(grupoFormato),
 						getSelectedRadio(grupoEstado), textCantidad.getText(), libreria)) {
 

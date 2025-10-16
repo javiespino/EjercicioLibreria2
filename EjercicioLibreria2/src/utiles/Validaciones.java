@@ -9,7 +9,7 @@ public class Validaciones {
 	public static boolean validarLetras(String nombre) {
 		if (nombre == null || nombre.isEmpty())
 			return false;
-		return Pattern.matches("[\\p{L}\\s]+", nombre);
+		return Pattern.matches("[\\p{L}\\s]+", nombre.trim());
 	}
 
 	public static boolean validarISBN(String isbn, Libreria libreria) {
